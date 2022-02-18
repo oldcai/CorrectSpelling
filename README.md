@@ -5,6 +5,11 @@ This spelling correction plugin for Alfred is fixed and brought back in 2022-02-
 ## What is CheckSpelling
 CheckSpelling checks and corrects spelling in various languages. There are six configurable keyboard shortcuts, but you’ll typically need to setup only between one and three.
 
+
+<img src='https://github.com/oldcai/CheckSpelling/raw/main/source/screenshot.gif' width='640' height='320' align='center' alt='CheckSpelling Preview'>
+
+[download](https://github.com/oldcai/CheckSpelling/raw/main/CheckSpelling.alfredworkflow)
+
 ## Supported languages
 
 | Code    | Language | Default Shortcut |
