@@ -3,7 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>bundleid</key>
-	<string>com.vitorgalvao.alfred.checkspelling</string>
+	<string>com.oldcai.alfred.correctspelling</string>
+	<key>category</key>
+	<string>Tools</string>
 	<key>connections</key>
 	<dict>
 		<key>13726627-0959-44C2-95D3-D3E21B7407A0</key>
@@ -35,18 +37,7 @@
 			</dict>
 		</array>
 		<key>6C3A9229-C695-41E0-8A56-B39CBA762269</key>
-		<array>
-			<dict>
-				<key>destinationuid</key>
-				<string>78366C9D-1E5F-4A8A-A05C-4558388DCEA1</string>
-				<key>modifiers</key>
-				<integer>0</integer>
-				<key>modifiersubtext</key>
-				<string></string>
-				<key>vitoclose</key>
-				<false/>
-			</dict>
-		</array>
+		<array/>
 		<key>6CE976F5-125E-4BD9-8C60-8CD4231457E6</key>
 		<array>
 			<dict>
@@ -86,6 +77,19 @@
 				<false/>
 			</dict>
 		</array>
+		<key>EFEE492C-DBB3-4B39-B7BF-5411B59AD984</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>2459201D-A4A1-458A-8A1B-4B7EFEFE0E9B</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
 		<key>FD364D9B-5493-4964-A7FB-E9430406F04A</key>
 		<array>
 			<dict>
@@ -101,13 +105,13 @@
 		</array>
 	</dict>
 	<key>createdby</key>
-	<string>Vítor Galvão</string>
+	<string>oldcai</string>
 	<key>description</key>
-	<string>Spelling correction in various languages</string>
+	<string>A multilingual spell checker</string>
 	<key>disabled</key>
 	<false/>
 	<key>name</key>
-	<string>CheckSpelling</string>
+	<string>CorrectSpelling</string>
 	<key>objects</key>
 	<array>
 		<dict>
@@ -124,11 +128,9 @@
 				<key>focusedappvariablename</key>
 				<string></string>
 				<key>hotkey</key>
-				<integer>1</integer>
+				<integer>0</integer>
 				<key>hotmod</key>
-				<integer>1835008</integer>
-				<key>hotstring</key>
-				<string>S</string>
+				<integer>0</integer>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -159,7 +161,9 @@ id="CheckSpelling$(pwd | sed 's/.*\.//' | md5)"
 urlEncodedString=$(echo "${text}" | perl -MURI::Escape -wlne 'print uri_escape ($_)')
 [[ "${urlEncodedString}" == *'%20' ]] &amp;&amp; space=" "
 
-echo -n "$(curl -s "https://${lang}.service.afterthedeadline.com/checkDocument?key=${id}&amp;data=${urlEncodedString}" | grep option | head -1 | sed 's/^.*&lt;option&gt;\(.*\)&lt;\/option&gt;/\1/')${space}"</string>
+url="https://typo.oldcai.com/correct/${lang}?key=${id}&amp;text=${urlEncodedString}"
+
+echo -n "$(curl -s $url)"</string>
 				<key>scriptargtype</key>
 				<integer>0</integer>
 				<key>scriptfile</key>
@@ -177,103 +181,14 @@ echo -n "$(curl -s "https://${lang}.service.afterthedeadline.com/checkDocument?k
 		<dict>
 			<key>config</key>
 			<dict>
-				<key>concurrently</key>
-				<false/>
-				<key>escaping</key>
-				<integer>0</integer>
-				<key>script</key>
-				<string># THESE VARIABLES MUST BE SET. SEE THE ONEUPDATER README FOR AN EXPLANATION OF EACH.
-readonly remote_info_plist="https://raw.githubusercontent.com/vitorgalvao/alfred-workflows/master/${alfred_workflow_name}/source/info.plist"
-readonly workflow_url="https://raw.githubusercontent.com/vitorgalvao/alfred-workflows/master/${alfred_workflow_name}/${alfred_workflow_name}.alfredworkflow"
-readonly download_type='direct'
-readonly frequency_check='4'
-
-# FROM HERE ON, CODE SHOULD BE LEFT UNTOUCHED!
-function abort {
-  echo "${1}" &gt;&amp;2
-  exit 1
-}
-
-function url_exists {
-  curl --silent --location --output /dev/null --fail --range 0-0 "${1}"
-}
-
-function notification {
-  local -r notificator="$(find . -type d -name 'Notificator.app')"
-  if [[ -n "${notificator}" ]]; then
-    "${notificator}/Contents/Resources/Scripts/notificator" --message "${1}" --title "${alfred_workflow_name}" --subtitle 'A new version is available'
-    return
-  fi
-
-  local -r terminal_notifier="$(find . -type f -name 'terminal-notifier')"
-  if [[ -n "${terminal_notifier}" ]]; then
-    "${terminal_notifier}" -title "${alfred_workflow_name}" -subtitle 'A new version is available' -message "${1}"
-    return
-  fi
-
-  osascript -e "display notification \"${1}\" with title \"${alfred_workflow_name}\" subtitle \"A new version is available\""
-}
-
-# Local sanity checks
-readonly local_info_plist='info.plist'
-readonly local_version="$(/usr/libexec/PlistBuddy -c 'print version' "${local_info_plist}")"
-
-[[ -n "${local_version}" ]] || abort 'You need to set a workflow version in the configuration sheet.'
-[[ "${download_type}" =~ ^(direct|page|github_release)$ ]] || abort "'download_type' (${download_type}) needs to be one of 'direct', 'page', or 'github_release'."
-[[ "${frequency_check}" =~ ^[0-9]+$ ]] || abort "'frequency_check' (${frequency_check}) needs to be a number."
-
-# Check for updates
-if [[ $(find "${local_info_plist}" -mtime +"${frequency_check}"d) ]]; then
-  if ! url_exists "${remote_info_plist}"; then abort "'remote_info_plist' (${remote_info_plist}) appears to not be reachable."; fi # Remote sanity check
-
-  readonly tmp_file="$(mktemp)"
-  curl --silent --location --output "${tmp_file}" "${remote_info_plist}"
-  readonly remote_version="$(/usr/libexec/PlistBuddy -c 'print version' "${tmp_file}")"
-
-  if [[ "${local_version}" == "${remote_version}" ]]; then
-    touch "${local_info_plist}" # Reset timer by touching local file
-    exit 0
-  fi
-
-  if [[ "${download_type}" == 'page' ]]; then
-    notification 'Opening download page…'
-    open "${workflow_url}"
-    exit 0
-  fi
-
-  download_url="$([[ "${download_type}" == 'github_release' ]] &amp;&amp; curl --silent "https://api.github.com/repos/${workflow_url}/releases/latest" | grep 'browser_download_url' | head -1 | sed -E 's/.*browser_download_url": "(.*)"/\1/' || echo "${workflow_url}")"
-
-  if url_exists "${download_url}"; then
-    notification 'Downloading and installing…'
-    curl --silent --location --output "${HOME}/Downloads/${alfred_workflow_name}.alfredworkflow" "${download_url}"
-    open "${HOME}/Downloads/${alfred_workflow_name}.alfredworkflow"
-  else
-    abort "'workflow_url' (${download_url}) appears to not be reachable."
-  fi
-fi</string>
-				<key>scriptargtype</key>
-				<integer>1</integer>
-				<key>scriptfile</key>
-				<string></string>
-				<key>type</key>
-				<integer>0</integer>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.action.script</string>
-			<key>uid</key>
-			<string>78366C9D-1E5F-4A8A-A05C-4558388DCEA1</string>
-			<key>version</key>
-			<integer>2</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
 				<key>autopaste</key>
 				<true/>
 				<key>clipboardtext</key>
 				<string>{query}</string>
-				<key>transient</key>
+				<key>ignoredynamicplaceholders</key>
 				<false/>
+				<key>transient</key>
+				<true/>
 			</dict>
 			<key>type</key>
 			<string>alfred.workflow.output.clipboard</string>
@@ -296,11 +211,11 @@ fi</string>
 				<key>focusedappvariablename</key>
 				<string></string>
 				<key>hotkey</key>
-				<integer>1</integer>
+				<integer>-1</integer>
 				<key>hotmod</key>
-				<integer>1310720</integer>
+				<integer>524288</integer>
 				<key>hotstring</key>
-				<string>S</string>
+				<string>double tap</string>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -332,6 +247,8 @@ fi</string>
 				<integer>0</integer>
 				<key>hotmod</key>
 				<integer>0</integer>
+				<key>hotstring</key>
+				<string></string>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -391,11 +308,9 @@ fi</string>
 				<key>focusedappvariablename</key>
 				<string></string>
 				<key>hotkey</key>
-				<integer>1</integer>
+				<integer>0</integer>
 				<key>hotmod</key>
-				<integer>786432</integer>
-				<key>hotstring</key>
-				<string>S</string>
+				<integer>0</integer>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -427,8 +342,6 @@ fi</string>
 				<integer>0</integer>
 				<key>hotmod</key>
 				<integer>0</integer>
-				<key>hotstring</key>
-				<string></string>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -443,11 +356,44 @@ fi</string>
 			<key>version</key>
 			<integer>2</integer>
 		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>action</key>
+				<integer>0</integer>
+				<key>argument</key>
+				<integer>1</integer>
+				<key>argumenttext</key>
+				<string>ru</string>
+				<key>focusedappvariable</key>
+				<false/>
+				<key>focusedappvariablename</key>
+				<string></string>
+				<key>hotkey</key>
+				<integer>0</integer>
+				<key>hotmod</key>
+				<integer>0</integer>
+				<key>hotstring</key>
+				<string></string>
+				<key>leftcursor</key>
+				<false/>
+				<key>modsmode</key>
+				<integer>0</integer>
+				<key>relatedAppsMode</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.trigger.hotkey</string>
+			<key>uid</key>
+			<string>EFEE492C-DBB3-4B39-B7BF-5411B59AD984</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
 	</array>
 	<key>readme</key>
 	<string>Check and correct spelling in various languages. There are six configurable keyboard shortcuts, but you’ll typically need to setup only between one and three.
 
-Select a word and press a shortcut — the first one will show you the word following Alfred’s `spell` keyword, so you’ll have a set of words to pick from for the substitution (to have it automatically switch the word in this case, you’ll need to set it up in Alfred’s preferences under `Features` → `Dictionary`). The following five will immediately replace the word with the best suggestion (using the [After the Deadline](http://afterthedeadline.com/) service).</string>
+Select a word and press a shortcut — the first one will show you the word following Alfred’s `spell` keyword, so you’ll have a set of words to pick from for the substitution (to have it automatically switch the word in this case, you’ll need to set it up in Alfred’s preferences under `Features` → `Dictionary`). The following five will immediately replace the word with the best suggestion.</string>
 	<key>uidata</key>
 	<dict>
 		<key>13726627-0959-44C2-95D3-D3E21B7407A0</key>
@@ -491,17 +437,6 @@ Select a word and press a shortcut — the first one will show you the word foll
 			<key>ypos</key>
 			<integer>730</integer>
 		</dict>
-		<key>78366C9D-1E5F-4A8A-A05C-4558388DCEA1</key>
-		<dict>
-			<key>colorindex</key>
-			<integer>12</integer>
-			<key>note</key>
-			<string>OneUpdater</string>
-			<key>xpos</key>
-			<integer>660</integer>
-			<key>ypos</key>
-			<integer>170</integer>
-		</dict>
 		<key>C09BC71E-09E7-4CFC-AB8D-4DAFDAF42E3D</key>
 		<dict>
 			<key>note</key>
@@ -520,6 +455,15 @@ Select a word and press a shortcut — the first one will show you the word foll
 			<key>ypos</key>
 			<integer>450</integer>
 		</dict>
+		<key>EFEE492C-DBB3-4B39-B7BF-5411B59AD984</key>
+		<dict>
+			<key>note</key>
+			<string>Russian</string>
+			<key>xpos</key>
+			<integer>30</integer>
+			<key>ypos</key>
+			<integer>880</integer>
+		</dict>
 		<key>FD364D9B-5493-4964-A7FB-E9430406F04A</key>
 		<dict>
 			<key>note</key>
@@ -530,9 +474,11 @@ Select a word and press a shortcut — the first one will show you the word foll
 			<integer>310</integer>
 		</dict>
 	</dict>
+	<key>variablesdontexport</key>
+	<array/>
 	<key>version</key>
-	<string>20.1</string>
+	<string>1.1.4</string>
 	<key>webaddress</key>
-	<string>http://vitorgalvao.com/</string>
+	<string>https://github.com/oldcai/CorrectSpelling</string>
 </dict>
 </plist>

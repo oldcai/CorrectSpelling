@@ -1,14 +1,16 @@
-# Alfred CheckSpelling
+# Alfred CorrectSpelling
 
-This spelling correction plugin for Alfred is fixed and brought back in 2022-02-18, and is now maintained by @oldcai.
+This spelling correction plugin for Alfred is created by [@vitorgalvao]() and named [CheckSpelling](https://github.com/vitorgalvao/alfred-workflows/tree/c0d9c9313857676997e6e05d9dda65cfa5fcda6a/CheckSpelling).
 
-## What is CheckSpelling
-CheckSpelling checks and corrects spelling in various languages. There are six configurable keyboard shortcuts, but you’ll typically need to setup only between one and three.
+CorrectSpelling is an unofficial fix of CheckSpelling, and CorrectSpelling is now maintained by @oldcai.
 
+## What is CorrectSpelling
 
-<img src='https://github.com/oldcai/CheckSpelling/raw/main/source/screenshot.gif' width='640' height='320' align='center' alt='CheckSpelling Preview'>
+<img src='https://github.com/oldcai/CorrectSpelling/raw/main/source/screenshot.gif' width='640' height='320' align='center' alt='CorrectSpelling Preview'>
 
-[download](https://github.com/oldcai/CheckSpelling/raw/main/CheckSpelling.alfredworkflow)
+CorrectSpelling checks and corrects spelling in various languages.
+
+[Download](https://github.com/oldcai/CorrectSpelling/raw/main/CorrectSpelling.alfredworkflow)
 
 ## Supported languages
 
