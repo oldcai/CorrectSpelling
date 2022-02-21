@@ -156,7 +156,7 @@
 				<string>lang="$(echo "{query}" | sed 's/^\(..\).*/\1/')"
 text="$(echo "{query}" | sed 's/^..//')"
 
-id="CheckSpelling$(pwd | sed 's/.*\.//' | md5)"
+id="$(pwd | sed 's/.*\.//' | md5)"
 
 urlEncodedString=$(echo "${text}" | perl -MURI::Escape -wlne 'print uri_escape ($_)')
 [[ "${urlEncodedString}" == *'%20' ]] &amp;&amp; space=" "
