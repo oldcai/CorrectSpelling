@@ -1,11 +1,5 @@
 # Alfred CorrectSpelling
 
-This spelling correction plugin for Alfred is created by [@vitorgalvao]() and named [CheckSpelling](https://github.com/vitorgalvao/alfred-workflows/tree/c0d9c9313857676997e6e05d9dda65cfa5fcda6a/CheckSpelling).
-
-CorrectSpelling is an unofficial fix of CheckSpelling, and CorrectSpelling is now maintained by @oldcai.
-
-## What is CorrectSpelling
-
 <img src='https://github.com/oldcai/CorrectSpelling/raw/main/source/screenshot.gif' width='640' height='320' align='center' alt='CorrectSpelling Preview'>
 
 CorrectSpelling checks and corrects spelling in various languages.
