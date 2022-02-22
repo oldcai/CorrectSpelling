@@ -156,7 +156,7 @@
 				<string>lang="$(echo "{query}" | sed 's/^\(..\).*/\1/')"
 text="$(echo "{query}" | sed 's/^..//')"
 
-id="$(pwd | sed 's/.*\.//' | md5)"
+id="CorrectSpelling$(pwd | sed 's/.*\.//' | md5)"
 
 urlEncodedString=$(echo "${text}" | perl -MURI::Escape -wlne 'print uri_escape ($_)')
 [[ "${urlEncodedString}" == *'%20' ]] &amp;&amp; space=" "
@@ -247,8 +247,6 @@ echo -n "$(curl -s $url)"</string>
 				<integer>0</integer>
 				<key>hotmod</key>
 				<integer>0</integer>
-				<key>hotstring</key>
-				<string></string>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
@@ -373,8 +371,6 @@ echo -n "$(curl -s $url)"</string>
 				<integer>0</integer>
 				<key>hotmod</key>
 				<integer>0</integer>
-				<key>hotstring</key>
-				<string></string>
 				<key>leftcursor</key>
 				<false/>
 				<key>modsmode</key>
