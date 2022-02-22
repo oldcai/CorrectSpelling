@@ -14,14 +14,14 @@ CorrectSpelling checks and corrects spelling in various languages.
 
 ## Supported languages
 
-| Code    | Language | Default Shortcut |
-|:-------:|:----------:|:----------------:|
-| **en**  | English | ⌥⌥ (Double press Option key)
-| **de**  | German  | -
-| **es**  | Spanish | -
-| **fr**  | French  | -
-| **pt**  | Portuguese | -
-| **ru**  | Russian | -
+| Code    | Language |
+|:-------:|:----------:|
+| **en**  | English |
+| **de**  | German  |
+| **es**  | Spanish |
+| **fr**  | French  |
+| **pt**  | Portuguese |
+| **ru**  | Russian |
 
 
 ## How to use it
